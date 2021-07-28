@@ -1,0 +1,17 @@
+svg {
+  font: 10px sans-serif;
+  text-align: center;
+  display: block;
+  margin: auto;
+}
+
+body{
+  text-align: center;
+}
+
+div.tooltip {
+  position: absolute;
+  padding: 10px;                
+  font: 12px Arial;        
+  background:white;
+}

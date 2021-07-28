@@ -1,54 +1,41 @@
 const DATASETS = {
   videogames: {
-    TITLE: "Video Game Sales",
-    DESCRIPTION: "Top 100 Most Sold Video Games Grouped by Platform",
     FILE_PATH: "https://cdn.rawgit.com/freeCodeCamp/testable-projects-fcc/a80ce8f9/src/data/tree_map/video-game-sales-data.json"
   },
   movies: {
-    TITLE: "Movie Sales",
-    DESCRIPTION: "Top 100 Highest Grossing Movies Grouped By Genre",
     FILE_PATH: "https://cdn.rawgit.com/freeCodeCamp/testable-projects-fcc/a80ce8f9/src/data/tree_map/movie-data.json"
   },
   kickstarter: {
-    TITLE: "Kickstarter Pledges",
-    DESCRIPTION: "Top 100 Most Pledged Kickstarter Campaigns Grouped By Category",
     FILE_PATH: "https://cdn.rawgit.com/freeCodeCamp/testable-projects-fcc/a80ce8f9/src/data/tree_map/kickstarter-funding-data.json"
   }
 }
 
-var urlParams = new URLSearchParams(window.location.search);
+const urlParams = new URLSearchParams(window.location.search);
 const DEFAULT_DATASET = "videogames"
 const DATASET = DATASETS[urlParams.get('data') || DEFAULT_DATASET];
 
-document.getElementById("title").innerHTML = DATASET.TITLE;
-document.getElementById("description").innerHTML = DATASET.DESCRIPTION;
+const body = d3.select("body");
 
-// Define body
-var body = d3.select("body");
-
-// Define the div for the tooltip
-var tooltip = body.append("div")
+const tooltip = body.append("div")
   .attr("class", "tooltip")
   .attr("id", "tooltip")
   .style("opacity", 0);
 
-var svg = d3.select("#tree-map"),
+const svg = d3.select("#tree-map"),
   width = +svg.attr("width"),
   height = +svg.attr("height");
 
-var fader = function (color) { return d3.interpolateRgb(color, "#6700f9")(0.2); },
+const fader = function (color) { return d3.interpolateRgb(color, "#6700f9")(0.2); },
   color = d3.scaleOrdinal(d3.schemeCategory20.map(fader)),
   format = d3.format(",d");
 
-var treemap = d3.treemap()
+const treemap = d3.treemap()
   .size([width, height])
   .paddingInner(1);
 
 d3.json(DATASET.FILE_PATH, function (error, data) {
 
-  if (error) throw error;
-
-  var root = d3.hierarchy(data)
+  const root = d3.hierarchy(data)
     .eachBefore(function (d) {
       d.data.id = (d.parent ? d.parent.data.id + "." : "") + d.data.name;
     })
@@ -57,13 +44,13 @@ d3.json(DATASET.FILE_PATH, function (error, data) {
 
   treemap(root);
 
-  var cell = svg.selectAll("g")
+  const cell = svg.selectAll("g")
     .data(root.leaves())
     .enter().append("g")
     .attr("class", "group")
     .attr("transform", function (d) { return "translate(" + d.x0 + "," + d.y0 + ")"; });
 
-  var tile = cell.append("rect")
+  const tile = cell.append("rect")
     .attr("id", function (d) { return d.data.id; })
     .attr("class", "tile")
     .attr("width", function (d) { return d.x1 - d.x0; })
@@ -81,7 +68,6 @@ d3.json(DATASET.FILE_PATH, function (error, data) {
       return color(d.data.category);
     })
     .on("mousemove", function (d) {
-      console.log("mouseover");
       tooltip.style("opacity", .9);
       tooltip.html(
         'Name: ' + d.data.name +
@@ -107,23 +93,23 @@ d3.json(DATASET.FILE_PATH, function (error, data) {
 
 
 
-  var categories = root.leaves().map(function (nodes) {
+  let categories = root.leaves().map(function (nodes) {
     return nodes.data.category;
   });
   categories = categories.filter(function (category, index, self) {
     return self.indexOf(category) === index;
   })
-  var legend = d3.select("#legend")
-  var legendWidth = +legend.attr("width");
+  const legend = d3.select("#legend")
+  const legendWidth = +legend.attr("width");
   const LEGEND_OFFSET = 10;
   const LEGEND_RECT_SIZE = 15;
   const LEGEND_H_SPACING = 150;
   const LEGEND_V_SPACING = 10;
   const LEGEND_TEXT_X_OFFSET = 3;
   const LEGEND_TEXT_Y_OFFSET = -2;
-  var legendElemsPerRow = Math.floor(legendWidth / LEGEND_H_SPACING);
+  const legendElemsPerRow = Math.floor(legendWidth / LEGEND_H_SPACING);
 
-  var legendElem = legend
+  const legendElem = legend
     .append("g")
     .attr("transform", "translate(60," + LEGEND_OFFSET + ")")
     .selectAll("g")
